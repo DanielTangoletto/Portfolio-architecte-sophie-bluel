@@ -9,17 +9,17 @@
 	<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap" rel="stylesheet">
 	<meta name="description" content="">
 	<link rel="stylesheet" href="./assets/style.css">
-	<script src="/FrontEnd/projets.js" defer></script>
+	<script src="/FrontEnd/script.js" defer></script>
 </head>
 <body>
 <header>
 	<h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
 	<nav>
 		<ul>
-			<li>projets</li>
-			<li>contact</li>
-			<li>login</li>
-			<li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
+			<li><a href="#projets">projets</a></li>
+					<li><a href="#contact2">contact</a></li>
+					<li class="login_logout"><a href="login.html">login</a></li>
+					<li><img src="./assets/icons/instagram.png" alt="Instagram" class="insta"></li>
 		</ul>
 	</nav>
 </header>
@@ -37,12 +37,25 @@
 	</section>
 	<section id="portfolio">
 		<h2>Mes Projets</h2>
-		<div class="gallery">
-			<!-- <figure>
-				<img src="assets/images/abajour-tahina.png" alt="Abajour Tahina">
-				<figcaption>Abajour Tahina</figcaption>
-			</figure>	 -->
+
+		<div class="filtres">
+			<div class="tous">
+				<p>Tous</p>
+			</div>
+			<div class="objets">
+				<p>Objets</p>
+			</div>
+			<div class="appartements">
+				<p>Appartements</p>
+			</div>
+			<div class=" hotels">
+				<p>Hotels & restaurants</p>
+			</div>
 		</div>
+		<div class="gallery">
+
+		</div>
+			
 	</section>
 	<section id="contact">
 		<h2>Contact</h2>

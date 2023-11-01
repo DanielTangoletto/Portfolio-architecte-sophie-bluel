@@ -52,6 +52,7 @@ body {
 	margin:auto;
 	font-family: 'Work Sans' ;
 	font-size: 14px;
+	background-color: #FFFEF8;
 }
 header {
 	display: flex;
@@ -125,6 +126,35 @@ li:hover {
 	text-align: center;
 	margin-bottom: 1em;
 }
+
+/*FILTRES */
+
+.filtres{
+	display: flex;
+	margin-right: auto;
+	margin-left: auto;
+	margin-bottom: 30px;
+	width: 50%;
+}
+
+.filtres div {
+	color: #1D6154;
+	border: 1px solid #1D6154;
+	border-radius: 20px;
+	padding: 7px 20px;
+	margin-right:10px;
+}
+
+.filtres div:hover {
+	background-color: #1D6154;
+	color: white;
+	cursor: pointer;
+}
+
+.filtres div p {
+	font-family: 'Syne' ;
+}
+
 .gallery {
 	width: 100%;
 	display: grid;
@@ -180,9 +210,29 @@ input[type="submit"]{
 	border-radius: 60px ;
 }
 
+footer {
+	background-color: white;
+}
+
 footer nav ul {
 	display: flex;
 	justify-content: flex-end;
 	margin: 2em
 }
 
+a, a:visited {
+	color: black;
+	text-decoration: none;
+}
+
+header li:hover {
+	font-weight: 600;
+	color: black;
+}
+
+/*PAGE LOGIN*/
+
+#contact form a {
+	text-decoration: underline;
+	text-align: center;
+}

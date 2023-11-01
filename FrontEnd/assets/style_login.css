@@ -1,0 +1,9 @@
+#contact p {
+    color: red;
+    text-align: center;
+    padding-top: 10px;
+}
+
+#error-message {
+    display: none;
+}
