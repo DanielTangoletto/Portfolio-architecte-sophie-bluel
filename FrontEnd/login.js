@@ -31,7 +31,7 @@ sendInput.addEventListener("click", async (event) => {
       window.location.href = "index.html";
     } else errorDial.style.display = "block";
   } catch (err) {
-    window.alert("Problême de connection : impossible de vous identifier");
+    window.alert("Problème de connection : impossible de vous identifier");
     console.log(err);
   }
 });
