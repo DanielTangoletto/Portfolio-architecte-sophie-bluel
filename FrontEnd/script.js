@@ -289,7 +289,6 @@ const addButton = document.querySelector('.button2');
 
 addButton.addEventListener('click', () => {
 
-
   const title = titleInput.value;
   const category = categorySelect.value;
   const imageFile = fileInput.files[0];
@@ -298,6 +297,7 @@ addButton.addEventListener('click', () => {
   formData.append('title', title);
   formData.append('category', category);
   formData.append('image', imageFile);
+
 
   const token = sessionStorage.getItem("token");
   if (token) {
@@ -315,10 +315,11 @@ addButton.addEventListener('click', () => {
         }
         return response.json();
       })
+
       .then(data => {
         alert('Projet ajouté avec succès !');
-        location.reload(true);
-      })
+        })
+
       .catch(error => {
         console.error(error);
         alert('Erreur lors de l\'ajout du projet.');
