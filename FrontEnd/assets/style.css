@@ -228,6 +228,7 @@ a, a:visited {
 header li:hover {
 	font-weight: 600;
 	color: black;
+	cursor: pointer;
 }
 
 /* Barre Mode édition */

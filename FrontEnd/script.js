@@ -1,81 +1,75 @@
-/* AFFICHER LES PROJETS VIA L'API */
+/* AFFICHER LES PROJETS SUR LE SITE VIA L'API (avec function async/await/try/catch) */
+async function displayMode() {
+  try {
+    const responseJSON = await fetch("http://localhost:5678/api/works");
+    const responseJS = await responseJSON.json();
+    console.log(responseJS); 
 
-fetch("http://localhost:5678/api/works")
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Erreur de requête réseau');
-    }
-    return response.json();
-  })
-  .then(data => {
-    for (let i = 0; i < data.length; i++) {
-      let elements = data[i]
+    if (responseJS) {
+      const gallery = document.querySelector(".gallery");
 
-      const gallery = document.querySelector(".gallery")
+      responseJS.forEach((data) => {
+      const project = document.createElement("figure");
+        
+      const img = document.createElement("img");
+      img.src = data.imageUrl;
+      project.appendChild(img);
 
+      const imgTitle = document.createElement("figcaption");
+      imgTitle.innerText = data.title;
+      project.appendChild(imgTitle);
 
-      /* Creation des elements */
-      const project = document.createElement("figure")
-      const img = document.createElement("img")
-      img.src = elements.imageUrl
-      const imgTitle = document.createElement("figcaption")
-      imgTitle.innerText = elements.title
-
-      gallery.appendChild(project)
-      project.appendChild(img)
-      project.appendChild(imgTitle)
-
+      gallery.appendChild(project);
       project.classList.add("project");
-      project.setAttribute("category", elements.category.name);
+      project.setAttribute("category", data.category.name);
+    })
+  }}
 
-    }
-  })
+  catch(error) {
+    console.log(error, "Erreur de requête réseau");
+}}
 
-  /* FILTRER PAR PROJETS */
+displayMode();
 
-fetch("http://localhost:5678/api/categories")
-.then(response => {
-  if (!response.ok) {
-    throw new Error('Erreur de requête réseau');
-  }
-  return response.json();
-})
+  /* FILTRER PAR PROJETS (async/await/try/catch) */
 
-.then(dataCategory => {
-  // Récupérez la liste des filtres
+async function filterMode() {
+  try {
+  const responseJSON = await fetch("http://localhost:5678/api/categories");
+  const responseJS = await responseJSON.json();
+
+  if(responseJS) {
   const filters = document.querySelectorAll('.filtres div');
-
-  // Écoutez les clics sur les boutons de filtre
   filters.forEach(filter => {
-    filter.addEventListener('click', () => {
-      // Récupérez le nom de la catégorie du filtre cliqué
-      const filterName = filter.textContent.trim(); // Utilisez le contenu textuel du filtre comme catégorie
+        filter.addEventListener('click', () => {
+          const filterName = filter.textContent.trim();
+          const projects = document.querySelectorAll('.project');
 
-      // Filtrage des projets en fonction du nom de la catégorie
-      const projects = document.querySelectorAll('.project');
+          projects.forEach(project => {
+                    const projectCategory = project.getAttribute('category');
 
-      projects.forEach(project => {
-        const projectCategory = project.getAttribute('category');
-
-        if (filterName !== 'Tous' && filterName !== projectCategory) {
-          project.style.display = 'none';
-        } else {
-          project.style.display = 'block';
-        }
+                    if (filterName !== 'Tous' && filterName !== projectCategory) {
+                                project.style.display = 'none';
+                              } else {
+                                project.style.display = 'block';
+                              }
       });
     });
   });
-})
-.catch(error => {
-  console.error('Une erreur s\'est produite lors de la récupération des catégories : ', error);
-});
+}}
+
+catch(error) {
+  console.log(error, "Erreur de requête réseau");
+}}
+
+filterMode();
 
 
-/* MODE CONNECTÉ */
+/* Mode Connecté */
 
 function isConnected() {
-  if (sessionStorage.getItem("token")) return true;
-  else return false;
+  if (sessionStorage.getItem("token"))
+  return true;
 }
 
 function EditionMode() {
@@ -85,7 +79,7 @@ function EditionMode() {
   const filters = document.querySelector(".filtres");
   const modifBtn2 = document.querySelector(".modif_button2");
 
-  if (isConnected() === true) {
+  if (isConnected()) {
     login_Logout.innerText = "logout";
     login_Logout.addEventListener("click", () => {
       sessionStorage.removeItem("token");
@@ -99,131 +93,120 @@ function EditionMode() {
 
 EditionMode()
 
-
-
-// Modale pour afficher les projets //
-
-//Affichage de la modale au clic des bouton modif
+// Afficher/Fermer la modale des projets //
 
 const buttonModif1 = document.querySelector('.modif_button');
 const buttonModif2 = document.querySelector('.modif_button2');
+const xmark = document.querySelector('.fa-xmark');
+const modaleBackground = document.querySelector('.modale_bg');
+
+function displayEditMode() {
+  const modale = document.querySelector('.modale_gallery');
+  modale.style.display = 'block';
+}
+
+function closeEditMode() {
+  const modale = document.querySelector('.modale_gallery');
+  modale.style.display = 'none';
+}
 
 /* Bouton Mode Edition */
 buttonModif1.addEventListener('click', () => {
-  const modale = document.querySelector('.modale_gallery');
-  modale.style.display = 'block';
+  displayEditMode();
 })
 
 /* Bouton Modifier */
 buttonModif2.addEventListener('click', () => {
-  const modale = document.querySelector('.modale_gallery');
-  modale.style.display = 'block';
+  displayEditMode();
 })
 
-//Fermeture de la modale au clic de la croix (sans recharge de la page)
-
-const xmark = document.querySelector('.fa-xmark')
-
+//Fermer la modale au clic de la croix (sans recharge de la page)
 xmark.addEventListener('click', (event) => {
-  // location.reload(true);
   event.preventDefault();
-  const modale = document.querySelector('.modale_gallery');
-  modale.style.display = 'none';
+  closeEditMode();
 })
 
-//Fermeture de la modale au clic du background (sans recharge de la page)
-
-const modaleBackground = document.querySelector('.modale_bg')
-
+//Fermer la modale au clic du background (sans recharge de la page)
 modaleBackground.addEventListener('click', (event) => {
   event.preventDefault();
-  const modale = document.querySelector('.modale_gallery');
-  modale.style.display = 'none';
+  closeEditMode();
 });
 
-//Affichage des projets dans la modale
+// Afficher les projets dans la modale
 
-fetch("http://localhost:5678/api/works")
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Erreur de requête réseau');
-    }
-    return response.json();
-  })
-  .then(data => {
-    for (let i = 0; i < data.length; i++) {
-      let elements = data[i]
+async function displayModaleMode() {
+    try {
+        const responseJSON = await fetch('http://localhost:5678/api/works');
+        const responseJS = await responseJSON.json();
 
-      const galleryModale = document.querySelector(".project-modale")
+    if (responseJS) {
+        const galleryModale = document.querySelector(".project-modale");
 
-      // Creation des elements 
-      const projectModale = document.createElement("figure")
-      const img = document.createElement("img")
-      img.src = elements.imageUrl
-      const imgTitle = document.createElement("figcaption")
-      imgTitle.innerText = elements.title
+      responseJS.forEach((data) => {
+        const projectModale = document.createElement("figure");
+        const img = document.createElement("img");
+        const imgTitle = document.createElement("figcaption");
 
-      galleryModale.appendChild(projectModale)
-      projectModale.appendChild(img)
-      projectModale.appendChild(imgTitle)
+        const corbeille = document.createElement("i");
+        const contentCorbeille = document.createElement("div");
+  
+        img.src = data.imageUrl;
+        imgTitle.innerText = data.title;
+  
+        galleryModale.appendChild(projectModale);
+        projectModale.appendChild(img);
+        projectModale.appendChild(imgTitle);
 
-      projectModale.classList.add("project");
-      projectModale.setAttribute("data-category", elements.category.name);
+        corbeille.classList.add("fa-solid", "fa-trash-can");
+        contentCorbeille.appendChild(corbeille);
+        projectModale.appendChild(contentCorbeille);
+  
+        projectModale.classList.add("project");
+        projectModale.setAttribute("data-category", data.category.name);  
 
-      // Suppression des projets
-      const corbeille = document.createElement("i");
-      const contentCorbeille = document.createElement("div");
-      corbeille.classList.add("fa-solid", "fa-trash-can");
-      contentCorbeille.appendChild(corbeille);
-      projectModale.appendChild(contentCorbeille);
-
-      contentCorbeille.addEventListener("click", () => {
-        // Demander une confirmation avant de supprimer le projet
-        const confirmation = window.confirm("Êtes-vous sûr de vouloir supprimer ce projet ?");
-
-        if (confirmation) {
-          const token = sessionStorage.getItem("token");
-          if (token) {
-            fetch(`http://localhost:5678/api/works/${elements.id}`, {
-              method: "DELETE",
-              headers: {
-                'Authorization': `Bearer ${token}`
-              },
-              accept: "application/json",
-            })
-              .then(response => {
-                if (!response.ok) {
-                  throw new Error("Erreur de requête réseau");
+        contentCorbeille.addEventListener("click", () => {
+          const confirmation = window.confirm("Êtes-vous sûr de vouloir supprimer ce projet ?");
+        
+          if (confirmation) {
+            const token = sessionStorage.getItem("token");
+            if (token) {
+                 fetch(`http://localhost:5678/api/works/${data.id}`, {
+                    method: "DELETE",
+                    headers: {
+                    'Authorization': `Bearer ${token}`
+                    },
+                    accept: "application/json",
+                    })
+                    .then(() => {
+                      alert('Projet supprimé avec succès !');
+                       projectModale.remove();
+                       location.reload(true);
+                       })
                 }
-                return response;
-              })
-              .then(data => {
-                projectModale.remove();
-              })
-              .catch(error => {
-                console.error(error);
-              });
           }
-        }
-      });
-    }
-  })
+        })
+    })}
+}
+  catch(error) {
+    console.log(error, "Erreur de requête réseau");
+}}
+
+displayModaleMode();
 
 
 // affichage de la modale2
 
-const boutonAjouter = document.querySelector(".button1")
+const btnAjouter = document.querySelector(".button1");
+const leftArrow = document.querySelector(".fa-arrow-left")
 
-boutonAjouter.addEventListener('click', () => {
+btnAjouter.addEventListener('click', () => {
   const modale = document.querySelector('.modale_gallery');
   const modale2 = document.querySelector('.modale_content');
   modale.style.display = 'none';
   modale2.style.display = 'block';
 })
 
-// Retour en arriere modale2
-const leftArrow = document.querySelector(".fa-arrow-left")
-
+// Retour en arriere de la modale 2
 leftArrow.addEventListener('click', () => {
   const modale = document.querySelector('.modale_gallery');
   const modale2 = document.querySelector('.modale_content');
@@ -233,22 +216,23 @@ leftArrow.addEventListener('click', () => {
 
 // Fermeture de la seconde modale avec la seconde croix (sans recharge de la page)
 
-const xmark2 = document.querySelector('.xmark2')
+const xmark2 = document.querySelector('.xmark2');
+const modaleBackground2 = document.querySelector('.modale_bg2');
+
+function closeEditMode2() {
+  const modale = document.querySelector('.modale_content');
+  modale.style.display = 'none';
+}
 
 xmark2.addEventListener('click', (event) => {
   event.preventDefault();
-  const modale = document.querySelector('.modale_content');
-  modale.style.display = 'none';
+  closeEditMode2();
 })
 
 //Fermeture de la modale au clic du background2 (sans recharge de la page)
-
-const modaleBackground2 = document.querySelector('.modale_bg2')
-
 modaleBackground2.addEventListener('click', (event) => {
   event.preventDefault();
-  const modale = document.querySelector('.modale_content');
-  modale.style.display = 'none';
+  closeEditMode2();
 })
 
 // Previsualiser photo
@@ -293,13 +277,13 @@ addButton.addEventListener('click', () => {
   const category = categorySelect.value;
   const imageFile = fileInput.files[0];
 
-  const formData = new FormData();
+  const formData = new FormData()
   formData.append('title', title);
   formData.append('category', category);
   formData.append('image', imageFile);
-
-
+  
   const token = sessionStorage.getItem("token");
+
   if (token) {
     fetch('http://localhost:5678/api/works', {
       method: 'POST',
@@ -309,20 +293,12 @@ addButton.addEventListener('click', () => {
       },
       accept: 'application/json',
     })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Erreur de requête réseau');
-        }
-        return response.json();
-      })
 
       .then(data => {
         alert('Projet ajouté avec succès !');
+        console.log(data);
+        location.reload(true);
         })
 
-      .catch(error => {
-        console.error(error);
-        alert('Erreur lors de l\'ajout du projet.');
-      });
   }
 });
