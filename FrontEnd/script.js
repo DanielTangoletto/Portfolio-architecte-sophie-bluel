@@ -130,8 +130,8 @@ modaleBackground.addEventListener("click", (event) => {
 });
 
 function closeModale1() {
-  const modale = document.querySelector(".modale1");
-  modale.style.display = "none";
+  const modale1 = document.querySelector(".modale1");
+  modale1.style.display = "none";
 }
 
 async function deletePage() {
@@ -169,6 +169,7 @@ function displayWorksOnPage(worksData) {
 async function displayModaleMode() {
   const data = await getResponseFromApi("works", "GET");
   const galleryModale = document.querySelector(".project-modale");
+  galleryModale.innerHTML = "";
 
   data.forEach((i) => {
     const projectModale = createProjectModale(i);
@@ -197,21 +198,26 @@ function createProjectModale(i) {
 }
 
 // AJOUT DE LA CORBEILLE
-function createCorbeille(i) {
+async function createCorbeille(i) {
   const corbeille = document.createElement("i");
   corbeille.classList.add("fa-solid", "fa-trash-can");
 
   const contentCorbeille = document.createElement("div");
   contentCorbeille.appendChild(corbeille);
 
-  contentCorbeille.addEventListener("click", async () => {
-    const confirmation = window.confirm("Êtes-vous sûr de vouloir supprimer ce projet ?");
-    if (confirmation) {
-      await deleteProject(i.id);
-      alert("Projet supprimé avec succès !");
-      closeModale1();
-    }
-  });
+  const clickCorbeille = () => {
+    return new Promise(async (resolve) => {
+      const confirmation = window.confirm("Êtes-vous sûr de vouloir supprimer ce projet ?");
+      if (confirmation) {
+        await deleteProject(i.id);
+        alert("Projet supprimé avec succès !");
+        closeModale1();
+      }
+      resolve();
+    });
+  };
+
+  contentCorbeille.addEventListener("click", clickCorbeille);
   return contentCorbeille;
 }
 
@@ -315,10 +321,16 @@ async function postMode() {
 
 addButton.addEventListener("click", async (e) => {
   await postMode();
+  await displayModaleMode();
   alert("Projet rajouté avec succès !");
   closeModale2();
   await updatePage();
   e.preventDefault();
 });
 
-// le projet s'ajoute bien sur le site, mais pas directement sur la modale 2
+function cleanProjectModale() {
+  let galleryModale2 = document.querySelectorAll(".project-modale");
+  for (const elem of galleryModale2) {
+    elem.parentNode.removeChild(elem);
+}
+  }
