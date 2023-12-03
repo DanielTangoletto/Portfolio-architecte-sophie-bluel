@@ -134,11 +134,6 @@ function closeModale1() {
   modale1.style.display = "none";
 }
 
-async function deletePage() {
-  const deleteData = await getResponseFromApi("works", "DELETE");
-  displayWorksOnPage(deleteData);
-}
-
 async function updatePage() {
   const updateData = await getResponseFromApi("works", "GET");
   displayWorksOnPage(updateData);
@@ -168,6 +163,7 @@ function displayWorksOnPage(worksData) {
 // AFFICHAGE DES PROJETS DANS LA MODALE
 async function displayModaleMode() {
   const data = await getResponseFromApi("works", "GET");
+  console.log("Data from API:", data);
   const galleryModale = document.querySelector(".project-modale");
   galleryModale.innerHTML = "";
 
@@ -198,35 +194,25 @@ function createProjectModale(i) {
 }
 
 // AJOUT DE LA CORBEILLE
-async function createCorbeille(i) {
+function createCorbeille(i) {
   const corbeille = document.createElement("i");
   corbeille.classList.add("fa-solid", "fa-trash-can");
 
   const contentCorbeille = document.createElement("div");
   contentCorbeille.appendChild(corbeille);
 
-  const clickCorbeille = () => {
-    return new Promise(async (resolve) => {
-      const confirmation = window.confirm("Êtes-vous sûr de vouloir supprimer ce projet ?");
-      if (confirmation) {
-        await deleteProject(i.id);
-        alert("Projet supprimé avec succès !");
-        closeModale1();
-      }
-      resolve();
-    });
-  };
-
-  contentCorbeille.addEventListener("click", clickCorbeille);
   return contentCorbeille;
 }
 
 async function deleteProject(projectId) {
+  console.log("Deleting project with ID:", projectId);
   await getResponseFromApi(`works/${projectId}`, "DELETE");
+
 }
 
-displayModaleMode(); // Le projet se supprime bien, mais j'ai un pb
-// (Uncaught (in promise) SyntaxError: JSON.parse: unexpected end of data at line 1 column 1 of the JSON data)
+displayModaleMode();
+
+
 
 // AFFICHAGE DE LA MODALE 2 ET SWITCH ENTRE LES DEUX
 
@@ -300,7 +286,7 @@ btnAddPhoto.addEventListener("change", () => {
 });
 
 // Envoi des nouveaux projets
-const addButton = document.querySelector(".button2");
+
 
 async function postMode() {
   const titleInput = document.getElementById("title");
@@ -319,18 +305,20 @@ async function postMode() {
   response = await getResponseFromApi("works", "POST", formData);
 }
 
+
+const addButton = document.querySelector(".button2");
 addButton.addEventListener("click", async (e) => {
   await postMode();
-  await displayModaleMode();
+  displayModaleMode();
   alert("Projet rajouté avec succès !");
   closeModale2();
   await updatePage();
   e.preventDefault();
 });
 
-function cleanProjectModale() {
-  let galleryModale2 = document.querySelectorAll(".project-modale");
-  for (const elem of galleryModale2) {
-    elem.parentNode.removeChild(elem);
-}
-  }
+// function cleanProjectModale() {
+//   let galleryModale2 = document.querySelectorAll(".project-modale");
+//   for (const elem of galleryModale2) {
+//     elem.parentNode.removeChild(elem);
+// }
+//   }
