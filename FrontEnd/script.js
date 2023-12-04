@@ -163,14 +163,15 @@ function displayWorksOnPage(worksData) {
 // AFFICHAGE DES PROJETS DANS LA MODALE
 async function displayModaleMode() {
   const data = await getResponseFromApi("works", "GET");
-  console.log("Data from API:", data);
   const galleryModale = document.querySelector(".project-modale");
+
   galleryModale.innerHTML = "";
 
   data.forEach((i) => {
     const projectModale = createProjectModale(i);
     galleryModale.appendChild(projectModale);
   });
+
   return galleryModale;
 }
 
@@ -193,25 +194,37 @@ function createProjectModale(i) {
   return projectModale;
 }
 
+async function removeElementsFromApi(projectId) {
+await getResponseFromApi(`works/${projectId}`, "DELETE");
+await displayWorksOnPage();
+alert("Projet supprimé avec succès !");
+closeModale1();
+}
+
+
 // AJOUT DE LA CORBEILLE
 function createCorbeille(i) {
+
   const corbeille = document.createElement("i");
   corbeille.classList.add("fa-solid", "fa-trash-can");
 
   const contentCorbeille = document.createElement("div");
   contentCorbeille.appendChild(corbeille);
 
+  const clickCorbeille = async () => {
+    const confirmation = window.confirm("Êtes-vous sûr de vouloir supprimer ce projet ?");
+    if (confirmation) {
+      await removeElementsFromApi(i.id);
+    }
+  };
+
+  contentCorbeille.addEventListener("click", (clickCorbeille));
   return contentCorbeille;
 }
 
-async function deleteProject(projectId) {
-  console.log("Deleting project with ID:", projectId);
-  await getResponseFromApi(`works/${projectId}`, "DELETE");
 
-}
 
 displayModaleMode();
-
 
 
 // AFFICHAGE DE LA MODALE 2 ET SWITCH ENTRE LES DEUX
@@ -286,8 +299,6 @@ btnAddPhoto.addEventListener("change", () => {
 });
 
 // Envoi des nouveaux projets
-
-
 async function postMode() {
   const titleInput = document.getElementById("title");
   const categorySelect = document.querySelector("select");
@@ -316,9 +327,4 @@ addButton.addEventListener("click", async (e) => {
   e.preventDefault();
 });
 
-// function cleanProjectModale() {
-//   let galleryModale2 = document.querySelectorAll(".project-modale");
-//   for (const elem of galleryModale2) {
-//     elem.parentNode.removeChild(elem);
-// }
-//   }
+
