@@ -1,6 +1,6 @@
 // FONCTION POUR CALL L'API
 async function getResponseFromApi(endpoint, method, formData) {
-  const baseUrl = "http://localhost:5678/api/" + endpoint;
+  const baseUrl = `http://localhost:5678/api/${endpoint}`;
   let params = {};
 
   if (method) {
@@ -15,6 +15,9 @@ async function getResponseFromApi(endpoint, method, formData) {
     formData ? (params.body = formData) : null;
   }
   const responseJSON = await fetch(baseUrl, params ? params : {});
+  if (method === "DELETE") {
+    return await responseJSON;
+  }
   return await responseJSON.json();
 }
 
@@ -194,12 +197,11 @@ function createProjectModale(i) {
   return projectModale;
 }
 
-async function removeElementsFromApi(projectId) {
-await getResponseFromApi(`works/${projectId}`, "DELETE");
-await displayWorksOnPage();
-alert("Projet supprimé avec succès !");
-closeModale1();
-}
+function removeElementsFromApi(projectId) {
+const remove = getResponseFromApi(`works/${projectId}`, "DELETE");
+if (remove) {
+  displayModaleMode();
+}}
 
 
 // AJOUT DE LA CORBEILLE
@@ -211,18 +213,19 @@ function createCorbeille(i) {
   const contentCorbeille = document.createElement("div");
   contentCorbeille.appendChild(corbeille);
 
-  const clickCorbeille = async () => {
+  const clickCorbeille = async (e) => {
     const confirmation = window.confirm("Êtes-vous sûr de vouloir supprimer ce projet ?");
     if (confirmation) {
       await removeElementsFromApi(i.id);
+      alert("Projet supprimé avec succès !");
+      await updatePage();
+      e.preventDefault();
     }
   };
 
   contentCorbeille.addEventListener("click", (clickCorbeille));
   return contentCorbeille;
 }
-
-
 
 displayModaleMode();
 
